@@ -1,0 +1,178 @@
+// NOTE: This is a reference implementation for a Node.js/Express payment server.
+// Copy this code into a new project or see server/README.md for setup instructions.
+//
+// ============================================================================
+// FILE: server.js
+// ============================================================================
+
+require('dotenv').config();
+const express = require('express');
+const crypto = require('crypto');
+
+const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const config = {
+  merchantId: process.env.JAZZCASH_MERCHANT_ID,
+  merchantPassword: process.env.JAZZCASH_MERCHANT_PASSWORD,
+  ppMerchantId: process.env.JAZZCASH_PP_MERCHANT_ID,
+  returnUrl: process.env.JAZZCASH_RETURN_URL || 'http://localhost:3000/payment/callback',
+  // Use these sandbox URLs; replace with production URLs for live
+  jazzcashUrl: 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/DoTransaction',
+  inquiryUrl: 'https://sandbox.jazzcash.com.pk/ApplicationAPI/API/Payment/QueryTransaction',
+};
+
+/**
+ * Helper: Generate authentication hash for JazzCash API
+ */
+function generateJazzCashHash(data, password) {
+  const str = data + password;
+  return crypto.createHmac('sha256', password).update(str).digest('hex');
+}
+
+/**
+ * POST /payment/request
+ * Request body: { amount, orderId, phone, email }
+ * Returns: { transactionId, paymentUrl }
+ */
+app.post('/payment/request', async (req, res) => {
+  try {
+    const { amount, orderId, phone, email } = req.body;
+
+    if (!amount || !orderId) {
+      return res.status(400).json({ error: 'Missing amount or orderId' });
+    }
+
+    const transactionDate = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
+    const expiryDate = new Date(Date.now() + 10 * 60 * 1000)
+      .toISOString()
+      .replace(/[-:]/g, '')
+      .split('.')[0];
+
+    const paymentData = {
+      pp_merchant_id: config.ppMerchantId,
+      pp_language: 'EN',
+      pp_version: '1.1',
+      pp_amount: (Math.round(amount * 100)).toString(),
+      pp_txn_datetime: transactionDate,
+      pp_txn_expiry_datetime: expiryDate,
+      pp_order_ref: orderId,
+      pp_return_url: config.returnUrl,
+      pp_notify_url: config.returnUrl,
+      pp_merchant_ref: `REF-${orderId}`,
+      pp_cust_id: email || phone,
+      pp_mobile_number: phone || '',
+      pp_description: `Asal Dairy Order ${orderId}`,
+    };
+
+    // Create signature string (order matters!)
+    const signatureString = Object.keys(paymentData)
+      .sort()
+      .map(key => `${key}=${paymentData[key]}`)
+      .join('&');
+
+    paymentData.pp_secure_hash = generateJazzCashHash(signatureString, config.merchantPassword);
+
+    const paymentUrl = `${config.jazzcashUrl}?${new URLSearchParams(paymentData)}`;
+
+    res.json({
+      success: true,
+      transactionId: `TXN-${Date.now()}`,
+      paymentUrl,
+      orderId,
+      amount,
+    });
+  } catch (error) {
+    console.error('Payment request error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /payment/callback
+ * JazzCash will redirect here after payment attempt.
+ * Verify the payment status and store the result.
+ */
+app.post('/payment/callback', async (req, res) => {
+  try {
+    const { pp_ResponseCode, pp_ResponseMessage, pp_Order_Reference, pp_secure_hash } = req.body;
+
+    // Verify hash
+    const receivedHash = pp_secure_hash;
+    const signatureString = Object.keys(req.body)
+      .filter(key => key !== 'pp_secure_hash')
+      .sort()
+      .map(key => `${key}=${req.body[key]}`)
+      .join('&');
+
+    const calculatedHash = generateJazzCashHash(signatureString, config.merchantPassword);
+
+    if (calculatedHash !== receivedHash) {
+      console.warn('Hash mismatch! Possible tampering.');
+      return res.status(400).json({ error: 'Hash mismatch' });
+    }
+
+    const success = pp_ResponseCode === '000';
+
+    // Store transaction record in your database here
+    console.log('Payment Result:', {
+      orderId: pp_Order_Reference,
+      success,
+      message: pp_ResponseMessage,
+      timestamp: new Date(),
+    });
+
+    // Redirect mobile app to success or failure screen
+    const redirectUrl = success
+      ? `asal-dairy://payment/success?orderId=${pp_Order_Reference}`
+      : `asal-dairy://payment/failure?message=${encodeURIComponent(pp_ResponseMessage)}`;
+
+    res.redirect(redirectUrl);
+  } catch (error) {
+    console.error('Callback error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * GET /payment/query/:orderId
+ * Query payment status (optional, for reconciliation)
+ */
+app.get('/payment/query/:orderId', async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const transactionDate = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
+
+    const queryData = {
+      pp_merchant_id: config.ppMerchantId,
+      pp_language: 'EN',
+      pp_order_ref: orderId,
+      pp_txn_datetime: transactionDate,
+    };
+
+    const signatureString = Object.keys(queryData)
+      .sort()
+      .map(key => `${key}=${queryData[key]}`)
+      .join('&');
+
+    queryData.pp_secure_hash = generateJazzCashHash(signatureString, config.merchantPassword);
+
+    // Call JazzCash API (example)
+    // const response = await axios.post(config.inquiryUrl, queryData);
+
+    res.json({
+      message: 'Query endpoint. Integrate with your JazzCash API credentials.',
+      orderId,
+    });
+  } catch (error) {
+    console.error('Query error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Payment server running on http://localhost:${PORT}`);
+  console.log('Sandbox mode. Use JazzCash test credentials from their dashboard.');
+});

@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "611728246126",
+    "project_id": "asal-dairy-milk-shop",
+    "storage_bucket": "asal-dairy-milk-shop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611728246126:android:b43473d8cdaa0eaec56d7f",
+        "android_client_info": {
+          "package_name": "com.asaldairy.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611728246126-885vu5kvs9kq2l3js2fjn620eqhhrflr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asaldairy.app",
+            "certificate_hash": "6959688e85105799497ab909a277bf25abab9ed0"
+          }
+        },
+        {
+          "client_id": "611728246126-f75lboouih1nt351stinup5h8v4uqqpn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asaldairy.app",
+            "certificate_hash": "535d7ed79a85d75ba55ca8c7421d2da444f63e22"
+          }
+        },
+        {
+          "client_id": "611728246126-g34hs8fphfjj5b2ub4ighb03l5an563g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asaldairy.app",
+            "certificate_hash": "7828bb27c5b89e11602f73073b207cc0f4a1bb9b"
+          }
+        },
+        {
+          "client_id": "611728246126-n23btt0mmr0n56a651vnqburtfuq8ttj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asaldairy.app",
+            "certificate_hash": "a8eb48cc466ee1447679f9f4920b34bd0b00f417"
+          }
+        },
+        {
+          "client_id": "611728246126-35f8j40i6t76pmdmpvo4cpiupt8g6tvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWFcx80Y6FFsicbEiv-3wxkm2YrRU7Ua0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611728246126-35f8j40i6t76pmdmpvo4cpiupt8g6tvm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611728246126:android:2a34306ecc8811c9c56d7f",
+        "android_client_info": {
+          "package_name": "com.asaldairy.app.owner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611728246126-35f8j40i6t76pmdmpvo4cpiupt8g6tvm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWFcx80Y6FFsicbEiv-3wxkm2YrRU7Ua0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611728246126-35f8j40i6t76pmdmpvo4cpiupt8g6tvm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

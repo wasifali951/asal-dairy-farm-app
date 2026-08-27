@@ -1,0 +1,70 @@
+name: asal_dairy
+description: "Asal Dairy Milk Shop - Fresh Dairy Products Management App"
+publish_to: 'none'
+
+version: 2.0.1+11
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  firebase_messaging: ^15.1.3
+  firebase_storage: ^12.3.4
+
+  # Google Sign-In
+  google_sign_in: ^6.2.2
+
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+
+  # State management
+  provider: ^6.1.2
+
+  # UI & utils
+  cupertino_icons: ^1.0.8
+  intl: ^0.19.0
+  http: ^1.2.2
+  package_info_plus: ^8.0.2
+  flutter_secure_storage: ^9.2.2
+  webview_flutter: ^4.10.0
+  geolocator: ^13.0.2
+  geocoding: ^3.0.0
+  image_picker: ^1.1.2
+  url_launcher: ^6.3.0
+
+  #sql and thermal printer
+  sqflite: ^2.3.0          # local offline DB
+  path: ^1.9.0
+  uuid: ^4.5.2
+  esc_pos_bluetooth: ^0.4.1   # or esc_pos_printer if you want Wi-Fi/LAN support too
+  esc_pos_utils: ^1.1.0       # for building the receipt commands
+  connectivity_plus: ^5.0.0   # detect when back online, trigger sync
+  permission_handler: ^11.0.0 # Bluetooth permissions on Android 12+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: 0.11.0
+
+  # App icon generator
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/assets/google_logo.png
+    - assets/assets/app_icon.png
+
+# App Icon Configuration
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/assets/app_icon.png"
