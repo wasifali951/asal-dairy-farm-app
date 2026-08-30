@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "611728246126-4itivml8e19beb218pd48f557escqsvh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.asaldairy.app",
+            "certificate_hash": "c0e84d948515cf88a2730a88852367736f9c6273"
+          }
+        },
+        {
           "client_id": "611728246126-885vu5kvs9kq2l3js2fjn620eqhhrflr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
